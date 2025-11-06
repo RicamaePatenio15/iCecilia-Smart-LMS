@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% set active='inventory' %}
+{% block content %}
+<h1>Book Inventory</h1>
+<div class="card">
+  <form method="post" action="{{ url_for('inventory_management') }}">
+    <div class="row-3">
+      <div><label>Title</label><input name="title" required></div>
+      <div><label>Author</label><input name="author"></div>
+      <div><label>Publisher</label><input name="publisher"></div>
+      <div><label>Category</label>
+        <select name="category_id" required>
+          {% for c in categories %}<option value="{{ c['category_id'] }}">{{ c['category_name'] }}</option>{% endfor %}
+        </select>
+      </div>
+      <div><label>Year</label><input name="year" type="number" min="1900" max="2099"></div>
+      <div><label>QR Code (printed on book)</label><input name="qr_code" placeholder="BK-..."></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn">Add Book</button></div>
+  </form>
+</div>
+
+<h2>Inventory List</h2>
+<div class="card">
+  <table class="table">
+    <tr><th>Title</th><th>Author</th><th>Category</th><th>Status</th><th>QR</th></tr>
+    {% for b in books %}
+      <tr>
+        <td>{{ b['title'] }}</td>
+        <td>{{ b['author'] or '' }}</td>
+        <td>{{ b['category_name'] }}</td>
+        <td><span class="badge {{ 'ok' if b['status']=='available' else 'danger' }}">{{ b['status'] }}</span></td>
+        <td>{{ b['qr_code'] }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

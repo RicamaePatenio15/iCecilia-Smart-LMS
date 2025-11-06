@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% set active='students' %}
+{% block content %}
+<h1>Students</h1>
+<div class="card">
+  <form method="post" action="{{ url_for('students') }}">
+    <div class="row-3">
+      <div><label>First name</label><input name="first_name" required></div>
+      <div><label>Last name</label><input name="last_name"></div>
+      <div><label>Year Level</label><select name="year_level"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+      <div><label>Contact #</label><input name="contact_no"></div>
+      <div><label>RFID / FID Code</label><input name="fid_code" required placeholder="RF-XXXX"></div>
+      <div><label>Status</label><select name="status"><option>Active</option><option>Inactive</option></select></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn">Add Student</button></div>
+  </form>
+</div>
+
+<h2>All Students</h2>
+<div class="card">
+  <table class="table table-students">
+    <thead>
+      <tr>
+        <th style="width:18%">FID</th>
+        <th>Name</th>
+        <th style="width:10%">Year</th>
+        <th style="width:16%">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in students %}
+      <tr>
+        <td>{{ s['fid_code'] }}</td>
+        <td>{{ s['first_name'] }} {{ s['last_name'] or '' }}</td>
+        <td>{{ s['year_level'] or '' }}</td>
+        <td><span class="badge {{ 'ok' if s['status']=='active' else '' }}">{{ s['status'] }}</span></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

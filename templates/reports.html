@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% set active='reports' %}
+{% block content %}
+<h1>Reports & Logs</h1>
+<div class="card">
+  <a class="btn" href="{{ url_for('export_csv') }}">Download CSV</a>
+</div>
+<div class="card">
+  <table class="table">
+    <tr><th>Name</th><th>FID</th><th>Book</th><th>QR</th><th>Borrowed</th><th>Returned</th></tr>
+    {% for r in records %}
+      <tr>
+        <td>{{ r['first_name'] }} {{ r['last_name'] or '' }}</td>
+        <td>{{ r['fid_code'] }}</td>
+        <td>{{ r['title'] }}</td>
+        <td>{{ r['qr_code'] }}</td>
+        <td>{{ r['borrowed_date'] }}</td>
+        <td>{{ r['returned_date'] or '' }}</td>
+      </tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

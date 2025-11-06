@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% set active='staff' %}
+{% block content %}
+
+<h1>Pending Staff Registrations</h1>
+<div class="card">
+  {% if pending %}
+    <table class="table table-staff">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Username</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for u in pending %}
+        <tr>
+          <td>{{ u['first_name'] }} {{ u['last_name'] or '' }}</td>
+          <td>{{ u['username'] }}</td>
+          <td><span class="badge warn">{{ u['status'] }}</span></td>
+          <td>
+            <form method="post" action="{{ url_for('approve_staff', user_id=u['user_id']) }}" style="display:inline"><button class="btn">Approve</button></form>
+            <form method="post" action="{{ url_for('deactivate_staff', user_id=u['user_id']) }}" style="display:inline"><button class="btn secondary">Reject</button></form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="small">No pending registrations.</p>
+  {% endif %}
+</div>
+
+<h2>Current Library Staff</h2>
+<div class="card">
+  {% if staff %}
+    <table class="table table-staff">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for u in staff %}
+        <tr>
+          <td>{{ u['first_name'] }} {{ u['last_name'] or '' }}</td>
+          <td><span class="badge ok">{{ u['status'] }}</span></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="small">No staff members yet.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

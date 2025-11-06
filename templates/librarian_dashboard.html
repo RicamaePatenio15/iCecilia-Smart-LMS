@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% set active='dashboard' %}
+{% block content %}
+  <h1>Welcome back, Admin!</h1>
+  <p>Manage your library system from this dashboard.</p>
+  <div class="card-grid">
+    <div class="card"><h3>Staff Management</h3><p>Approve and manage library staff</p><a class="btn" href="{{ url_for('staff_management') }}">Open</a></div>
+    <div class="card"><h3>Inventory Management</h3><p>Manage books and resources</p><a class="btn" href="{{ url_for('inventory_management') }}">Open</a></div>
+    <div class="card"><h3>Reports & Logs</h3><p>View system reports and logs</p><a class="btn" href="{{ url_for('reports') }}">Open</a></div>
+    <div class="card"><h3>System Settings</h3><p>Configure library settings</p><a class="btn" href="{{ url_for('settings') }}">Open</a></div>
+  </div>
+{% endblock %}

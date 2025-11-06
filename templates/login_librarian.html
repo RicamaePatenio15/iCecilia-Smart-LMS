@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Librarian Login — iCecilia Smart Library</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+<section class="login-hero">
+  <div class="login-card">
+    <h2 style="text-align:center;margin:0;color:var(--maroon)">LIBRARIAN</h2>
+    <p class="small" style="text-align:center">Enter credentials</p>
+
+    <form method="post" action="{{ url_for('do_login') }}">
+      <input type="hidden" name="as" value="librarian">
+      <label>Username</label>
+      <input name="username" placeholder="Username" required>
+
+      <label>Password</label>
+      <input type="password" name="password" placeholder="Password" required>
+
+      <button class="btn" style="margin-top:14px;width:100%">Login</button>
+    </form>
+  </div>
+</section>
+</body>
+</html>

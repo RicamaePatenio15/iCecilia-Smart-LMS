@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% set active='borrow' %}
+{% block content %}
+<h1>Borrow / Return</h1>
+<p class="small">For the prototype, enter the decoded <b>Book QR</b> and the student's <b>RFID code</b>. Camera scanning can be plugged in later.</p>
+<div class="card">
+  <form onsubmit="return submitScan(event)">
+    <div class="row-3">
+      <div><label>Book QR Code (qr_code)</label><input id="qr" required placeholder="BK-..."></div>
+      <div><label>Book ID (optional)</label><input id="book_id" type="number" min="1"></div>
+      <div><label>Student RFID / FID</label><input id="fid" required></div>
+    </div>
+    <div style="margin-top:10px"><button class="btn" id="btnGo">Process</button></div>
+  </form>
+  <pre id="scanResult" class="small"></pre>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/scan.js') }}"></script>
+{% endblock %}

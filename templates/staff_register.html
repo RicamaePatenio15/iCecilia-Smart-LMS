@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Staff Registration — iCecilia Smart Library</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=8">
+</head>
+<body>
+  <section class="login-hero">
+    <div class="login-card" style="max-width:420px">
+      <div style="text-align:center">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="SCC" style="height:80px;margin-bottom:8px">
+        <h2 style="margin:0; font-family:'Archivo Black', sans-serif; color:var(--maroon); font-size:24px; line-height:1.2;">
+          STAFF REGISTRATION
+        </h2>
+        <p class="small" style="margin:6px 0 14px">
+          After registering, a librarian must approve your account before you can sign in.
+        </p>
+      </div>
+
+      {% if created %}
+        <p class="badge ok" style="display:block; text-align:center; margin-bottom:12px;">
+          Registration submitted. Please wait for librarian approval.
+        </p>
+      {% endif %}
+
+      <form method="post" action="{{ url_for('staff_register') }}">
+        <div class="row" style="grid-template-columns:1fr 1fr">
+          <div>
+            <label>First name</label>
+            <input name="first_name" required>
+          </div>
+          <div>
+            <label>Last name</label>
+            <input name="last_name">
+          </div>
+          <div>
+            <label>Username</label>
+            <input name="username" required>
+          </div>
+          <div>
+            <label>Password</label>
+            <input name="password" type="password" required>
+          </div>
+        </div>
+
+        <button class="btn" style="width:100%; margin-top:14px">Submit Registration</button>
+      </form>
+
+      <div style="text-align:center; margin-top:12px">
+        <a href="{{ url_for('login') }}" class="small">← Back to Login</a>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

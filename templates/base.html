@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title or 'iCecilia Smart Library' }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=7">
+  </head>
+  <body>
+    <nav class="sidebar">
+      <div class="brand">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="logo" style="height:36px;width:36px">
+        <div>iCecilia Smart LMS</div>
+      </div>
+      {% if session.get('role')=='librarian' %}
+        <a href="{{ url_for('librarian_dashboard') }}" class="{{ 'active' if active=='dashboard' else '' }}">Dashboard</a>
+        <a href="{{ url_for('staff_management') }}" class="{{ 'active' if active=='staff' else '' }}">Staff Management</a>
+        <a href="{{ url_for('inventory_management') }}" class="{{ 'active' if active=='inventory' else '' }}">Inventory</a>
+        <a href="{{ url_for('students') }}" class="{{ 'active' if active=='students' else '' }}">Students</a>
+        <a href="{{ url_for('reports') }}" class="{{ 'active' if active=='reports' else '' }}">Reports & Logs</a>
+        <a href="{{ url_for('settings') }}" class="{{ 'active' if active=='settings' else '' }}">System Settings</a>
+      {% elif session.get('role')=='staff' %}
+        <a href="{{ url_for('staff_dashboard') }}" class="{{ 'active' if active=='dashboard' else '' }}">Dashboard</a>
+        <a href="{{ url_for('borrow_return') }}" class="{{ 'active' if active=='borrow' else '' }}">Borrow / Return</a>
+        <a href="{{ url_for('reports') }}" class="{{ 'active' if active=='reports' else '' }}">Reports & Logs</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Login</a>
+      {% endif %}
+      {% if session.get('user') %}
+       <a href="{{ url_for('logout') }}">Logout</a>
+
+      {% endif %}
+    </nav>
+
+    <main class="with-sidebar">
+      <div class="header">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="logo" style="height:36px;width:36px">
+        <div class="brand">iCecilia Smart Library Management System</div>
+      </div>
+
+      <div class="container">
+        {% block content %}{% endblock %}
+      </div>
+
+      <footer>© {{ 2025 }} iCecilia Smart Library</footer>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

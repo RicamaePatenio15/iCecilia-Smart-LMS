@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% set active='dashboard' %}
+{% block content %}
+<h1>Hello, {{ session.get('user_name') or 'Staff' }}!</h1>
+<div class="card-grid">
+  <div class="card"><h3>Borrow / Return</h3><p>Scan book QR & student RFID</p><a class="btn" href="{{ url_for('borrow_return') }}">Open</a></div>
+  <div class="card"><h3>Reports & Logs</h3><p>See current borrow status</p><a class="btn" href="{{ url_for('reports') }}">Open</a></div>
+</div>
+{% endblock %}
