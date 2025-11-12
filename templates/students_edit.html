@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% set active='students' %}
+{% block content %}
+<h1>Edit Student</h1>
+
+<div class="card" style="max-width:900px;">
+  <form method="post" action="{{ url_for('student_edit_post', student_id=student['student_id']) }}">
+    <div class="row-3">
+      <div>
+        <label>First name</label>
+        <input name="first_name" value="{{ student['first_name'] }}" required>
+      </div>
+      <div>
+        <label>Last name</label>
+        <input name="last_name" value="{{ student['last_name'] or '' }}">
+      </div>
+      <div>
+        <label>Year level</label>
+        <input name="year_level" value="{{ student['year_level'] or '' }}">
+      </div>
+
+      <div>
+        <label>Contact #</label>
+        <input name="contact_no" value="{{ student['contact_no'] or '' }}">
+      </div>
+
+      <div>
+        <label>RFID / FID Code</label>
+        <input name="fid_code" value="{{ student['fid_code'] }}" required>
+      </div>
+
+      <div>
+        <label>Status</label>
+        <select name="status">
+          <option value="active" {% if student['status']=='active' %}selected{% endif %}>Active</option>
+          <option value="inactive" {% if student['status']=='inactive' %}selected{% endif %}>Inactive</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-top:12px; display:flex; gap:10px;">
+      <button class="btn" type="submit">Save changes</button>
+      <a class="btn secondary" href="{{ url_for('students') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

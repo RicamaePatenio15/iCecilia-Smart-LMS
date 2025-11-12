@@ -170,3 +170,128 @@ footer{padding:30px 0;text-align:center;color:#777}
   padding-top: 0;
 }
 
+/* Students action button sizes */
+.btn-sm{ padding:6px 10px; font-size:14px; border-radius:10px; }
+.table-students td, .table-students th { vertical-align: middle; }
+.table-students tbody tr td form { display:inline-block; margin:0; }
+
+/* small action buttons */
+.btn-sm{ padding:6px 10px; font-size:14px; border-radius:10px; }
+
+/* table alignment helper */
+.table-students td, .table-students th { vertical-align: middle; }
+
+/* Modal overlay */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  background: rgba(0,0,0,0.35);
+  z-index:2000;
+  padding:20px;
+}
+
+/* Modal card */
+.modal-card{
+  background:#fff;
+  border-radius:12px;
+  padding:18px;
+  width: min(520px, 95vw);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  border:2px solid var(--maroon);
+}
+
+/* ---- Align "All Students" title and filter on same row ---- */
+.students-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  margin-bottom: 10px;
+  gap: 16px;
+}
+
+.sub-heading {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--maroon-dark);
+  margin: 0;
+}
+
+/* ---- Right-aligned filter ---- */
+.filter-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.filter-form label.small {
+  font-size: 14px;
+  color: var(--maroon-dark);
+  font-weight: 600;
+}
+
+/* ---- Compact styled dropdown ---- */
+.styled-select {
+  min-width: 140px;
+  padding: 8px 34px 8px 12px;
+  border: 2px solid var(--maroon);
+  border-radius: 10px;
+  background-color: #fff;
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath fill='%237b1e1e' d='M0 0l5 6 5-6z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 10px 6px;
+  transition: all 0.15s ease-in-out;
+}
+
+.styled-select:hover {
+  background-color: #faf4f4;
+  border-color: var(--maroon-dark);
+}
+
+.styled-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(183, 28, 28, 0.15);
+}
+
+/* ---- Responsive layout ---- */
+@media (max-width: 850px) {
+  .students-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .filter-form {
+    justify-content: flex-start;
+  }
+}
+
+
+
+/* make the label look integrated with the select */
+form#filterForm label.small {
+  font-size: 14px;
+  color: var(--maroon-dark);
+  font-weight: 600;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* small-screen behavior: stack filter under header */
+@media (max-width: 880px) {
+  .students-header { flex-direction:column; align-items:stretch; gap:10px; }
+  .students-filter { justify-content:flex-start; margin-top:6px; }
+  .styled-select { min-width: 100%; max-width: 340px; padding-right: 36px; }
+}
+
+
