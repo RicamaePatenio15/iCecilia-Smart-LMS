@@ -70,3 +70,8 @@ To add real camera/QR decoding, plug a browser library (e.g., `html5-qrcode`) an
 - Passwords are stored as SHA‑256 hashes (see `schema.sql` seed and `app.py` login).
 - For production, switch to salted hash (bcrypt/argon2), HTTPS, and CSRF protection.
 
+cd C:\Users\ride1\Downloads\iCecilia_Smart_Library_Prototype
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+python app.py
+

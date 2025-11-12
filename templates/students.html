@@ -2,47 +2,34 @@
 {% set active='students' %}
 {% block content %}
 <h1>Students</h1>
-
 <div class="card">
   <form method="post" action="{{ url_for('students') }}">
     <div class="row-3">
       <div><label>First name</label><input name="first_name" required></div>
       <div><label>Last name</label><input name="last_name"></div>
-      <div><label>Year Level</label>
-        <select name="year_level">
-          <option>1</option><option>2</option><option>3</option><option>4</option>
-        </select>
-      </div>
+      <div><label>Year Level</label><select name="year_level"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
       <div><label>Contact #</label><input name="contact_no"></div>
       <div><label>RFID / FID Code</label><input name="fid_code" required placeholder="RF-XXXX"></div>
-      <div><label>Status</label>
-        <!-- normalized to lowercase values to match DB checks -->
-        <select name="status">
-          <option value="active">Active</option>
-          <option value="inactive">Inactive</option>
-        </select>
-      </div>
+      <div><label>Status</label><select name="status"><option>active</option><option>inactive</option></select></div>
     </div>
     <div style="margin-top:10px"><button class="btn">Add Student</button></div>
   </form>
 </div>
 
-<!-- single header + filter block -->
-<div class="students-header">
-  <h2 class="sub-heading">All Students</h2>
-
-  <form id="filterForm" method="get" action="{{ url_for('students') }}" class="filter-form">
-    <label class="small" for="statusFilter">Filter by status:</label>
-    <select name="status_filter" id="statusFilter" class="styled-select">
+<div style="display:flex; align-items:center; justify-content:space-between; margin-top:18px;">
+  <h2 style="margin:0; font-size:28px; font-weight:700; color:var(--maroon-dark)">All Students</h2>
+ 
+</div>
+ <form id="filterForm" method="get" action="{{ url_for('students') }}" style="display:flex; align-items:center; gap:10px;">
+    <label class="small" for="statusFilter" style="margin:0 8px 0 0;">Filter by status:</label>
+    <select name="status_filter" id="statusFilter" class="styled-select" style="min-width:160px;">
       <option value="all" {% if status_filter=='all' %}selected{% endif %}>All</option>
       <option value="active" {% if status_filter=='active' %}selected{% endif %}>Active</option>
       <option value="inactive" {% if status_filter=='inactive' %}selected{% endif %}>Inactive</option>
     </select>
   </form>
-</div>
 
-
-<div class="card">
+<div class="card" style="margin-top:12px">
   <table class="table table-students">
     <thead>
       <tr>
@@ -59,94 +46,44 @@
         <td>{{ s['fid_code'] }}</td>
         <td>{{ s['first_name'] }} {{ s['last_name'] or '' }}</td>
         <td style="text-align:center">{{ s['year_level'] or '' }}</td>
-        <td style="text-align:center"><span class="badge {{ 'ok' if s['status']=='active' else '' }}">{{ s['status'] }}</span></td>
+        <td style="text-align:center">
+          <span class="badge {% if s['status'] == 'active' %}ok{% endif %}">
+            {{ s['status'] }}
+          </span>
+        </td>
         <td style="text-align:center">
           <a class="btn btn-sm" href="{{ url_for('student_edit', student_id=s['student_id']) }}" style="margin-right:8px">Edit</a>
-
           {% if s['status'] == 'active' %}
-            <button type="button" class="btn secondary btn-sm"
-              onclick="openConfirmModal('deactivate', {{ s['student_id'] }}, '{{ (s['first_name'] + ' ' + (s['last_name'] or ''))|escape }}')">
-              Deactivate
-            </button>
+            <form method="post" action="{{ url_for('student_deactivate', student_id=s['student_id']) }}" style="display:inline-block; margin:0;">
+              <button class="btn secondary btn-sm" type="submit" style="margin:0;">Deactivate</button>
+            </form>
           {% else %}
-            <form method="post" action="{{ url_for('student_restore', student_id=s['student_id']) }}" style="display:inline">
-              <button class="btn" type="submit">Restore</button>
+            <form method="post" action="{{ url_for('student_restore', student_id=s['student_id']) }}" style="display:inline-block; margin:0;">
+              <button class="btn btn-sm" type="submit" style="margin:0;">Restore</button>
             </form>
           {% endif %}
         </td>
       </tr>
       {% endfor %}
+      {% if not students %}
+      <tr>
+        <td colspan="5" style="text-align:center; padding:20px; color:var(--gray);">
+          No students found.
+        </td>
+      </tr>
+      {% endif %}
     </tbody>
   </table>
 </div>
 
-<!-- Confirmation modal -->
-<div id="confirmModal" style="display:none" class="modal-overlay" aria-hidden="true">
-  <div class="modal-card">
-    <h3 id="modalTitle">Confirm</h3>
-    <p id="modalBody">Are you sure?</p>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px">
-      <button class="btn secondary" type="button" onclick="closeConfirmModal()">Cancel</button>
-      <form id="modalForm" method="post" action="">
-        <button class="btn" type="submit" id="modalConfirmBtn">Yes, proceed</button>
-      </form>
-    </div>
-  </div>
-</div>
-
 <script>
-  // Guarded auto-submit (won't throw if element missing)
-  (function(){
+  document.addEventListener('DOMContentLoaded', function() {
     const statusFilter = document.getElementById('statusFilter');
-    if(statusFilter){
-      statusFilter.addEventListener('change', function(){
-        const f = document.getElementById('filterForm');
-        if(f) f.submit();
+    if (statusFilter) {
+      statusFilter.addEventListener('change', function() {
+        document.getElementById('filterForm').submit();
       });
     }
-  })();
-
-  // Modal functions
-  function openConfirmModal(action, id, name){
-    const modal = document.getElementById('confirmModal');
-    const title = document.getElementById('modalTitle');
-    const body = document.getElementById('modalBody');
-    const form = document.getElementById('modalForm');
-    const btn = document.getElementById('modalConfirmBtn');
-
-    if(!modal || !form || !title || !body || !btn) return;
-
-    if(action === 'deactivate'){
-      title.textContent = 'Deactivate student';
-      body.textContent = "Are you sure you want to deactivate " + name + "? This will set the student's status to 'inactive'. Borrow history will be preserved.";
-      form.action = '/librarian/students/delete/' + id; // soft-delete route
-      btn.textContent = 'Deactivate';
-    } else {
-      title.textContent = 'Confirm action';
-      body.textContent = "Are you sure?";
-      form.action = '/';
-      btn.textContent = 'Yes';
-    }
-
-    modal.style.display = 'flex';
-    modal.setAttribute('aria-hidden','false');
-  }
-
-  function closeConfirmModal(){
-    const modal = document.getElementById('confirmModal');
-    if(!modal) return;
-    modal.style.display = 'none';
-    modal.setAttribute('aria-hidden','true');
-  }
-
-  // close modal when clicking overlay
-  (function(){
-    const modal = document.getElementById('confirmModal');
-    if(!modal) return;
-    modal.addEventListener('click', function(e){
-      if(e.target === this) closeConfirmModal();
-    });
-  })();
+  });
 </script>
-
 {% endblock %}

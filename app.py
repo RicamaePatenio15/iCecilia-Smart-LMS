@@ -126,14 +126,16 @@ def inventory_management():
     books = cur.fetchall()
     return render_template('inventory.html', categories=categories, books=books)
 
+# ---------- Students Management ----------
 @app.route('/librarian/students', methods=['GET','POST'])
 def students():
-    # librarian-only
-    if not require_librarian(): return redirect(url_for('login'))
+    if not require_librarian(): 
+        return redirect(url_for('login'))
+    
+    con = db()
+    cur = con.cursor(dictionary=True)
 
-    con = db(); cur = con.cursor(dictionary=True)
-
-    # If form POST (adding a student) keep your existing add-student logic
+    # Handle adding new student
     if request.method == 'POST':
         f = request.form
         cur.execute("""INSERT INTO tbl_student (fid_code, first_name, last_name, year_level, contact_no, status)
@@ -141,72 +143,80 @@ def students():
                     (f['fid_code'], f['first_name'], f.get('last_name'),
                      f.get('year_level'), f.get('contact_no'), f.get('status') or 'active'))
         con.commit()
+        cur.close()
+        con.close()
         return redirect(url_for('students'))
 
-    # Read status filter from query string (default 'all')
+    # Handle filtering
     status_filter = request.args.get('status_filter', 'all')
-    # Build SQL and params safely
     if status_filter == 'active':
         cur.execute("SELECT * FROM tbl_student WHERE status='active' ORDER BY student_id DESC")
     elif status_filter == 'inactive':
         cur.execute("SELECT * FROM tbl_student WHERE status='inactive' ORDER BY student_id DESC")
     else:
         cur.execute("SELECT * FROM tbl_student ORDER BY student_id DESC")
+    
     students = cur.fetchall()
-
-    # Render template and pass current filter so UI can show selection
+    cur.close()
+    con.close()
+    
     return render_template('students.html', students=students, status_filter=status_filter)
 
-
-# ----- Student edit / delete routes -----
-@app.get('/librarian/students/edit/<int:student_id>')
+@app.route('/librarian/students/edit/<int:student_id>', methods=['GET','POST'])
 def student_edit(student_id):
-    if not require_librarian(): return redirect(url_for('login'))
-    con = db(); cur = con.cursor(dictionary=True)
-    cur.execute("SELECT * FROM tbl_student WHERE student_id=%s", (student_id,))
-    s = cur.fetchone()
-    if not s:
+    if not require_librarian(): 
+        return redirect(url_for('login'))
+    
+    con = db()
+    cur = con.cursor(dictionary=True)
+    
+    if request.method == 'POST':
+        f = request.form
+        cur.execute("""UPDATE tbl_student 
+                      SET fid_code=%s, first_name=%s, last_name=%s, year_level=%s, contact_no=%s, status=%s 
+                      WHERE student_id=%s""",
+                    (f.get('fid_code'), f.get('first_name'), f.get('last_name'),
+                     f.get('year_level'), f.get('contact_no'), f.get('status'), student_id))
+        con.commit()
+        cur.close()
+        con.close()
         return redirect(url_for('students'))
-    # render a separate edit page (template: students_edit.html)
-    return render_template('students_edit.html', student=s)
+    
+    cur.execute("SELECT * FROM tbl_student WHERE student_id=%s", (student_id,))
+    student = cur.fetchone()
+    cur.close()
+    con.close()
+    
+    if not student:
+        return redirect(url_for('students'))
+    
+    return render_template('student_edit.html', student=student)
 
-@app.post('/librarian/students/edit/<int:student_id>')
-def student_edit_post(student_id):
-    if not require_librarian(): return redirect(url_for('login'))
-    f = request.form
-    con = db(); cur = con.cursor()
-    cur.execute("""
-      UPDATE tbl_student
-      SET fid_code=%s, first_name=%s, last_name=%s, year_level=%s, contact_no=%s, status=%s
-      WHERE student_id=%s
-    """, (f.get('fid_code'), f.get('first_name'), f.get('last_name'),
-          f.get('year_level'), f.get('contact_no'), f.get('status'), student_id))
-    con.commit()
-    return redirect(url_for('students'))
-
-# Soft-delete (deactivate) and restore student + modal-friendly endpoints
-@app.post('/librarian/students/delete/<int:student_id>')
-def student_delete(student_id):
-    if not require_librarian(): return redirect(url_for('login'))
-    con = db(); cur = con.cursor()
-    # Soft delete: mark inactive so history remains
+@app.post('/librarian/students/deactivate/<int:student_id>')
+def student_deactivate(student_id):
+    if not require_librarian(): 
+        return redirect(url_for('login'))
+    
+    con = db()
+    cur = con.cursor()
     cur.execute("UPDATE tbl_student SET status='inactive' WHERE student_id=%s", (student_id,))
     con.commit()
+    cur.close()
+    con.close()
     return redirect(url_for('students'))
 
 @app.post('/librarian/students/restore/<int:student_id>')
 def student_restore(student_id):
-    if not require_librarian(): return redirect(url_for('login'))
-    con = db(); cur = con.cursor()
+    if not require_librarian(): 
+        return redirect(url_for('login'))
+    
+    con = db()
+    cur = con.cursor()
     cur.execute("UPDATE tbl_student SET status='active' WHERE student_id=%s", (student_id,))
     con.commit()
+    cur.close()
+    con.close()
     return redirect(url_for('students'))
-
-
-
-
-
-
 
 # Staff routes
 def require_staff():
@@ -324,3 +334,4 @@ def staff_login():
 if __name__=='__main__':
     app.run(debug=True)
 
+   
